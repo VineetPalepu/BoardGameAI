@@ -4,6 +4,7 @@
 #include <random>
 #include <memory>
 #include <chrono>
+#include <new>
 
 #include "TicTacToe.h"
 
@@ -21,9 +22,13 @@ class MCTS
 		std::vector<Node*> children;
 
 		TicTacToe currentState;
-		
-		Node(TicTacToe state, Node* parent)
-			:currentState(state), wins(state.numPlayers), sims(), isTerminal(false), childrenCreated(false), UCB(), parent(parent), children()
+
+		Node(const TicTacToe& state, Node* parent)
+			:currentState(state),
+			wins(state.numPlayers),
+			sims(),	isTerminal(false), childrenCreated(false), UCB(),
+			parent(parent),
+			children()
 		{
 		}
 
@@ -31,7 +36,8 @@ class MCTS
 		{
 			for (auto child : children)
 			{
-				delete child;
+				child->~Node();
+				//delete child;
 			}
 		}
 
@@ -40,10 +46,11 @@ class MCTS
 	};
 
 public:
+	static int nodeCount;
 
 	static int getBestMove(TicTacToe game, double seconds);
 
-	static Node* selectNode(Node* root);
+	static Node* selectNode(Node* root, void* memory);
 	static Node* expandNode(Node* node);
 	static int simulate(TicTacToe state);
 	static void backprop(Node* node, int winner);

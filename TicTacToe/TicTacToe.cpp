@@ -10,7 +10,7 @@ TicTacToe::TicTacToe(int8_t numPlayers, int8_t numToWin, int8_t rows, int8_t col
 	prevMove = { -1, -1 };
 }
 
-void TicTacToe::place(int8_t player, Position pos)
+void TicTacToe::place(int8_t player, const Position& pos)
 {
 	board[p2i(pos)] = player;
 	openPositions.erase(std::remove(openPositions.begin(), openPositions.end(), p2i(pos)), openPositions.end());
@@ -45,8 +45,8 @@ int8_t TicTacToe::checkWin()
 			consecutive++;
 			if (consecutive >= numToWin)
 				return player;
-			newPos.row += dir.row;
 			newPos.col += dir.col;
+			newPos.row += dir.row;
 		}
 
 		consecutive--;
@@ -59,8 +59,8 @@ int8_t TicTacToe::checkWin()
 			consecutive++;
 			if (consecutive >= numToWin)
 				return player;
-			newPos.row -= dir.row;
 			newPos.col -= dir.col;
+			newPos.row -= dir.row;
 		}
 	}
 	return 0;
@@ -105,7 +105,7 @@ void TicTacToe::printBoard()
 	std::cout << std::endl;
 }
 
-int8_t TicTacToe::p2i(Position pos)
+int8_t TicTacToe::p2i(const Position& pos)
 {
 	return pos.row * cols + pos.col;
 }

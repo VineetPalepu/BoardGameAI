@@ -24,7 +24,7 @@ public:
 
 	TicTacToe(int8_t numPlayers, int8_t numToWin, int8_t rows, int8_t cols);
 
-	void place(int8_t player, Position p);
+	void place(int8_t player, const Position& p);
 	int8_t checkWin();
 	int8_t lastMove();
 	int8_t lastPlayer();
@@ -33,7 +33,7 @@ public:
 
 	void printBoard();
 
-	int8_t p2i(Position pos);
+	int8_t p2i(const Position& pos);
 	Position i2p(int8_t i);
 };
 

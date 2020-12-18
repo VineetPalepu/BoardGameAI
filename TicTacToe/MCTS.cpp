@@ -1,17 +1,20 @@
 #include "MCTS.h"
+int MCTS::nodeCount = 0;
 
 int MCTS::getBestMove(TicTacToe game, double seconds)
 {
     Node root(game, nullptr);
-
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+    void* memory = operator new(sizeof(Node) * 3000000);
+    nodeCount = 0;
 
     int iters = 0;
     //for (int i = 0; i < 400000; i++)
     while ( std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() < seconds)
     {
         iters++;
-        Node* toExpand = selectNode(&root);
+        Node* toExpand = selectNode(&root, memory);
         Node* toSim = nullptr;
         int winner;
         if (toExpand->isTerminal)
@@ -32,10 +35,15 @@ int MCTS::getBestMove(TicTacToe game, double seconds)
     Node* bestMove = *std::max_element(root.children.begin(), root.children.end(), 
         [](Node* n1, Node* n2) -> bool { return n1->sims < n2->sims; });
 
-    return bestMove->currentState.lastMove();
+    int move = bestMove->currentState.lastMove();
+    
+    root.~Node();
+    operator delete(memory);
+
+    return move;
 }
 
-MCTS::Node* MCTS::selectNode(Node* root)
+MCTS::Node* MCTS::selectNode(Node* root, void* memory)
 {
     Node* node = root;
     while (node->isFullyExpanded() && !node->isLeaf())
@@ -49,7 +57,8 @@ MCTS::Node* MCTS::selectNode(Node* root)
         {
             TicTacToe childState = node->currentState;
             childState.place(node->currentState.nextPlayer(), node->currentState.i2p(move));
-            Node* child = new Node(childState, node);
+            Node* child = new(static_cast<Node*>(memory) + nodeCount) Node(childState, node);
+            nodeCount++;
             int winningPlayer = childState.checkWin();
             
             if (winningPlayer != 0)
