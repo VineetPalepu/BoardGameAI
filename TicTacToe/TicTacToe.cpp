@@ -1,6 +1,6 @@
 #include "TicTacToe.h"
 
-TicTacToe::TicTacToe(int numPlayers, int numToWin, int rows, int cols)
+TicTacToe::TicTacToe(int8_t numPlayers, int8_t numToWin, int8_t rows, int8_t cols)
 	:board(rows * cols), openPositions{}, numPlayers{ numPlayers }, numToWin{ numToWin }, rows{ rows }, cols{ cols }
 {
 	for (int i = 0; i < rows * cols; i++)
@@ -10,14 +10,14 @@ TicTacToe::TicTacToe(int numPlayers, int numToWin, int rows, int cols)
 	prevMove = { -1, -1 };
 }
 
-void TicTacToe::place(int player, Position pos)
+void TicTacToe::place(int8_t player, Position pos)
 {
 	board[p2i(pos)] = player;
 	openPositions.erase(std::remove(openPositions.begin(), openPositions.end(), p2i(pos)), openPositions.end());
 	prevMove = pos;
 }
 
-int TicTacToe::checkWin()
+int8_t TicTacToe::checkWin()
 {
 	if (prevMove.row == -1 && prevMove.col == -1)
 		return 0;
@@ -45,7 +45,8 @@ int TicTacToe::checkWin()
 			consecutive++;
 			if (consecutive >= numToWin)
 				return player;
-			newPos = { newPos.row + dir.row, newPos.col + dir.col };
+			newPos.row += dir.row;
+			newPos.col += dir.col;
 		}
 
 		consecutive--;
@@ -58,18 +59,19 @@ int TicTacToe::checkWin()
 			consecutive++;
 			if (consecutive >= numToWin)
 				return player;
-			newPos = { newPos.row - dir.row, newPos.col - dir.col };
+			newPos.row -= dir.row;
+			newPos.col -= dir.col;
 		}
 	}
 	return 0;
 }
 
-int TicTacToe::lastMove()
+int8_t TicTacToe::lastMove()
 {
 	return p2i(prevMove);
 }
 
-int TicTacToe::lastPlayer()
+int8_t TicTacToe::lastPlayer()
 {
 	if (prevMove.row == -1 && prevMove.col == -1)
 		return 0;
@@ -77,38 +79,38 @@ int TicTacToe::lastPlayer()
 	return board[p2i(prevMove)];
 }
 
-int TicTacToe::nextPlayer()
+int8_t TicTacToe::nextPlayer()
 {
 	return lastPlayer() % numPlayers + 1;
 }
 
-std::vector<int> TicTacToe::getMoves()
+const std::vector<int8_t>& TicTacToe::getMoves()
 {
 	if (checkWin() != 0) // If someone has won, no possible moves
-		return {};
+		openPositions.clear();
 
 	return openPositions;
 }
 
 void TicTacToe::printBoard()
 {
-	for (int row = 0; row < rows; row++)
+	for (int8_t row = 0; row < rows; row++)
 	{
-		for (int col = 0; col < cols; col++)
+		for (int8_t col = 0; col < cols; col++)
 		{
-			std::cout << board[p2i({ row, col })] << " ";
+			std::cout << (int)board[p2i({ row, col })] << " ";
 		}
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
 }
 
-int TicTacToe::p2i(Position pos)
+int8_t TicTacToe::p2i(Position pos)
 {
 	return pos.row * cols + pos.col;
 }
 
-TicTacToe::Position TicTacToe::i2p(int i)
+TicTacToe::Position TicTacToe::i2p(int8_t i)
 {
 	return {i / cols, i % cols};
 }
