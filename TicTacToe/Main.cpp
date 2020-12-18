@@ -10,9 +10,9 @@ using namespace std::chrono;
 int main()
 {	
 	int players = 2;
-	int numToWin = 4;
-	int sizeX = 7;
-	int sizeY = 7;
+	int numToWin = 5;
+	int sizeX = 9;
+	int sizeY = 9;
 
 	high_resolution_clock::time_point start = high_resolution_clock::now();
 	
@@ -22,7 +22,7 @@ int main()
 	{
 		// CPU P1
 		game.printBoard();
-		int move = MCTS::getBestMove(game, 2);
+		int move = MCTS::getBestMove(game, 5);
 		game.place(1, game.i2p(move));
 		winner = game.checkWin();
 		if (winner != 0)
@@ -30,7 +30,7 @@ int main()
 
 		// CPU P2
 		game.printBoard();
-		move = MCTS::getBestMove(game, 2);
+		move = MCTS::getBestMove(game, 5);
 		game.place(2, game.i2p(move));
 		winner = game.checkWin();
 		if (winner != 0)

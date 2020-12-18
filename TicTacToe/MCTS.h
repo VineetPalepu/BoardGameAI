@@ -4,7 +4,6 @@
 #include <random>
 #include <memory>
 #include <chrono>
-#include <new>
 
 #include "TicTacToe.h"
 
@@ -36,8 +35,7 @@ class MCTS
 		{
 			for (auto child : children)
 			{
-				child->~Node();
-				//delete child;
+				delete child;
 			}
 		}
 
@@ -46,11 +44,9 @@ class MCTS
 	};
 
 public:
-	static int nodeCount;
-
 	static int getBestMove(TicTacToe game, double seconds);
 
-	static Node* selectNode(Node* root, void* memory);
+	static Node* selectNode(Node* root);
 	static Node* expandNode(Node* node);
 	static int simulate(TicTacToe state);
 	static void backprop(Node* node, int winner);
